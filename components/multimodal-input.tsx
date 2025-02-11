@@ -121,6 +121,7 @@ function PureMultimodalInput({
 
     handleSubmit(undefined, {
       experimental_attachments: attachments,
+      blocksMode: blocksMode,
     })
 
     setAttachments([])
@@ -137,6 +138,7 @@ function PureMultimodalInput({
     setLocalStorageInput,
     width,
     chatId,
+    blocksMode,
   ])
 
   const uploadFile = async (file: File) => {
@@ -192,6 +194,8 @@ function PureMultimodalInput({
     },
     [setAttachments],
   )
+
+  const [blocksMode, setBlocksMode] = useState(false)
 
   return (
     <div className="relative w-full flex flex-col gap-4">
@@ -256,6 +260,7 @@ function PureMultimodalInput({
 
       <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
         <AttachmentsButton fileInputRef={fileInputRef} isLoading={isLoading} />
+        <BlocksModeButton blocksMode={blocksMode} setBlocksMode={setBlocksMode} isLoading={isLoading} />
       </div>
 
       <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
@@ -361,3 +366,29 @@ const SendButton = memo(PureSendButton, (prevProps, nextProps) => {
 
   return true
 })
+
+function PureBlocksModeButton({
+  blocksMode,
+  setBlocksMode,
+  isLoading,
+}: {
+  blocksMode: boolean
+  setBlocksMode: Dispatch<SetStateAction<boolean>>
+  isLoading: boolean
+}) {
+  return (
+    <Button
+      className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
+      onClick={(event) => {
+        event.preventDefault()
+        setBlocksMode(!blocksMode)
+      }}
+      disabled={isLoading}
+      variant={blocksMode ? 'default' : 'ghost'}
+    >
+      Blocks Mode
+    </Button>
+  )
+}
+
+const BlocksModeButton = memo(PureBlocksModeButton)
