@@ -1,6 +1,5 @@
 import type {
   Attachment,
-  ChatRequestOptions,
   CreateMessage,
   Message,
 } from 'ai'
@@ -48,6 +47,11 @@ export interface UIBlock {
     width: number
     height: number
   }
+}
+
+export interface ChatRequestOptions {
+  experimental_attachments?: Array<Attachment>
+  blocksMode?: boolean
 }
 
 function PureBlock({
@@ -100,7 +104,7 @@ function PureBlock({
   } = useSWR<Array<Document>>(
     block.documentId !== 'init' && block.status !== 'streaming'
       ? `/api/document?id=${block.documentId}`
-      : null,
+    : null,
     fetcher,
   )
 
