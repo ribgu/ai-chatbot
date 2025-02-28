@@ -1,4 +1,4 @@
-import { customProvider } from 'ai'
+import { customProvider, extractReasoningMiddleware, wrapLanguageModel } from 'ai'
 import { githubModels } from './github'
 import { copilotModels } from './copilot'
 import { customModels } from './custom'
@@ -31,7 +31,10 @@ export const myProvider = customProvider({
     'claude-3.5-sonnet-copilot': copilotModels.copilot('claude-3.5-sonnet'),
     'gemini-2.0-flash-copilot': copilotModels.copilot('gemini-2.0-flash-001'),
     'claude-3.7-sonnet': copilotModels.copilot('claude-3.7-sonnet'),
-    'claude-3.7-sonnet-thought': copilotModels.copilot('claude-3.7-sonnet-thought'),
+    'claude-3.7-sonnet-thought': wrapLanguageModel({
+      model: copilotModels.copilot('claude-3.7-sonnet-thought'),
+      middleware: extractReasoningMiddleware({ tagName: 'think' }),
+    }),
     
     // Utility Models
     'title-model': githubModels.openai('gpt-4o-mini'),
@@ -46,5 +49,12 @@ export const myProvider = customProvider({
 export const chatModels: Array<ChatModel> = [
   ...githubModels.models,
   ...copilotModels.models,
-  ...customModels.models
+  ...customModels.models,
+  {
+    id: 'claude-3.7-sonnet-thought',
+    name: 'Claude 3.7 Sonnet Thought',
+    description: 'Advanced model for creative and technical code suggestions with thought process',
+    provider: 'copilot',
+    category: 'Copilot'
+  }
 ]
