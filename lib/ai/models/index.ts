@@ -1,10 +1,11 @@
-import { customProvider } from 'ai'
+import { customProvider, extractReasoningMiddleware, wrapLanguageModel } from 'ai'
 import { githubModels } from './github'
 import { copilotModels } from './copilot'
 import { customModels } from './custom'
+import { models as openRouterModels, openRouter } from './open-router'
 
-export type ModelProvider = 'openai' | 'copilot' | 'custom'
-export type ModelCategory = 'GitHub Models' | 'Copilot' | 'Custom'
+export type ModelProvider = 'openai' | 'copilot' | 'custom' | 'openrouter'
+export type ModelCategory = 'GitHub Models' | 'Copilot' | 'Custom' | 'Open Router'
 
 export interface ChatModel {
   id: string
@@ -31,7 +32,18 @@ export const myProvider = customProvider({
     'claude-3.5-sonnet-copilot': copilotModels.copilot('claude-3.5-sonnet'),
     'gemini-2.0-flash-copilot': copilotModels.copilot('gemini-2.0-flash-001'),
     'claude-3.7-sonnet': copilotModels.copilot('claude-3.7-sonnet'),
-    'claude-3.7-sonnet-thought': copilotModels.copilot('claude-3.7-sonnet-thought'),
+    'claude-3.7-sonnet-thought': wrapLanguageModel({
+      model: copilotModels.copilot('claude-3.7-sonnet-thought'),
+      middleware: extractReasoningMiddleware({ tagName: 'think' }),
+    }),
+    
+    // OpenRouter Models
+    'deepseek-r1': openRouter('deepseek/deepseek-r1:free'),
+    'gemini-2.0-flash': openRouter('google/gemini-2.0-flash-thinking-exp-1219:free'),
+    'deepseek-chat': openRouter('deepseek/deepseek-chat:free'),
+    'gemini-2.0-pro': openRouter('google/gemini-2.0-pro-exp-02-05:free'),
+    'gemini-2.0-flash-lite': openRouter('google/gemini-2.0-flash-lite-preview-02-05:free'),
+    'learnlm-1.5-pro': openRouter('google/learnlm-1.5-pro-experimental:free'),
     
     // Utility Models
     'title-model': githubModels.openai('gpt-4o-mini'),
@@ -46,5 +58,6 @@ export const myProvider = customProvider({
 export const chatModels: Array<ChatModel> = [
   ...githubModels.models,
   ...copilotModels.models,
-  ...customModels.models
+  ...customModels.models,
+  ...openRouterModels
 ]

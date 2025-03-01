@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Github, Sparkles } from 'lucide-react'
+import { Github, Sparkles, Globe } from 'lucide-react'
 import { BrandGithubCopilot } from '@/components/icons'
 
 /**
@@ -31,6 +31,12 @@ export const providers: ProviderInfo[] = [
     name: 'Custom',
     description: 'Specialized models with custom system prompts',
     icon: Sparkles
+  },
+  {
+    id: 'openrouter',
+    name: 'Open Router',
+    description: 'Access to various open models via OpenRouter',
+    icon: Globe
   }
 ]
 
@@ -38,5 +44,6 @@ export const providers: ProviderInfo[] = [
 export const categoryToProviderId: Record<string, string> = {
   'GitHub Models': 'github',
   'Copilot': 'copilot',
-  'Custom': 'custom'
+  'Custom': 'custom',
+  'Open Router': 'openrouter'
 }
