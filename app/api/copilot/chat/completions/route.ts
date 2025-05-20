@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
     const data = await response.json()
     return NextResponse.json(data)
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error(`[${new Date().toISOString()}] Error in /api/copilot/chat/completions: Request model: ${body?.model}, Stream: ${body?.stream}, Error message: ${error.message}, Stack: ${error.stack}`, error);
+    return NextResponse.json({ error: "An unexpected error occurred while processing your request. Our team has been notified. Please try again later." }, { status: 500 })
   }
 }
