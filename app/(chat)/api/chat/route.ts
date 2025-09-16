@@ -403,13 +403,22 @@ function detectProvider(url?: string | null): ProviderKey | undefined {
   return undefined
 }
 
-function parseProviderErrorData(data: unknown, responseBody?: string | null) {
+type ParsedProviderError = {
+  message?: string
+  code?: string
+  type?: string
+}
+
+function parseProviderErrorData(
+  data: unknown,
+  responseBody?: string | null,
+): ParsedProviderError {
   const parsed = extractErrorData(data) ?? extractErrorData(safeParseErrorBody(responseBody))
 
   return parsed ?? {}
 }
 
-function extractErrorData(raw: unknown) {
+function extractErrorData(raw: unknown): ParsedProviderError | undefined {
   if (!raw || typeof raw !== 'object') return undefined
 
   const container =
