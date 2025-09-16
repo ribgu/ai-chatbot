@@ -1,4 +1,5 @@
 import { StringSanitizer } from './utils'
+import { buildCopilotAPIError, buildCopilotConnectionError } from './errors'
 
 const CHAT_COMPLETIONS_API_ENDPOINT = "https://api.individual.githubcopilot.com/chat/completions"
 const MODELS_API_ENDPOINT = "https://api.individual.githubcopilot.com/models"
@@ -54,16 +55,21 @@ export async function listModels(authToken?: string | null): Promise<any> {
     "editor-version": "vscode/1.95.3"
   }
 
-  const response = await fetch(MODELS_API_ENDPOINT, {
-    method: "GET",
-    headers
-  })
+  let response: Response
+
+  try {
+    response = await fetch(MODELS_API_ENDPOINT, {
+      method: "GET",
+      headers
+    })
+  } catch (error) {
+    throw buildCopilotConnectionError(error)
+  }
 
   if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`Models API error: ${errorText}`)
+    throw await buildCopilotAPIError(response)
   }
-  
+
   return await response.json()
 }
 
@@ -77,16 +83,21 @@ export async function proxyChatCompletions(requestBody: any, authToken?: string 
     "editor-version": "vscode/1.95.3"
   }
   const body = preprocessRequestBody(requestBody)
-  const response = await fetch(CHAT_COMPLETIONS_API_ENDPOINT, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(body)
-  })
+  let response: Response
+
+  try {
+    response = await fetch(CHAT_COMPLETIONS_API_ENDPOINT, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body)
+    })
+  } catch (error) {
+    throw buildCopilotConnectionError(error)
+  }
 
   if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`API error: ${errorText}`)
+    throw await buildCopilotAPIError(response)
   }
-  
+
   return response
 }
